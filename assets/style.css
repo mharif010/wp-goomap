@@ -88,8 +88,11 @@ iframe {
     border-radius: 10px;
     padding: 10px;
 }
+.status-list{
+    display: block !important;
+}
 .global-overview{
-    display: flex;
+    /* display: flex; */
     background-color: #d0d2d3;
     margin-bottom: 10px !important;
 }
@@ -105,6 +108,7 @@ b {
 }
 .project-title{
     font-size: 14px !important;
+    color: #fff;
 }
 .page-wrapper .theme {
     width: 40px;
@@ -264,10 +268,9 @@ b {
 
 .sidebar-wrapper .sidebar-menu ul li a {
     display: inline-block;
-    width: 100%;
     text-decoration: none;
     position: relative;
-    padding: 8px 30px 8px 20px;
+    padding: 8px 15px 8px 15px;
 }
 
 .sidebar-wrapper .sidebar-menu ul li a i {
@@ -299,7 +302,7 @@ b {
     text-align: center;
     background: 0 0;
     position: absolute;
-    right: 15px;
+    right: 5px;
     top: 14px;
 }
 
@@ -480,7 +483,7 @@ b {
 .chiller-theme .sidebar-wrapper .sidebar-brand>a,
 .chiller-theme .sidebar-wrapper .sidebar-menu ul li a,
 .chiller-theme .sidebar-footer>a {
-    color: #818896;
+    color: #0d131e;
 }
 
 .chiller-theme .sidebar-wrapper .sidebar-menu ul li:hover>a,
@@ -530,4 +533,8 @@ b {
 
 .chiller-theme .sidebar-footer>a:last-child {
     border-right: none;
+}
+.heading-text{
+    display: flex;
+    text-align: center;
 }

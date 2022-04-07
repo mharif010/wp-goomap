@@ -59,12 +59,12 @@ function projects(){
 		$args = array(
             'label' => 'Goo Projects',
             'public' => true,
+            'show_in_rest' => true,
+            'register_meta_box_cb' => 'employee_id_meta_box',
             'show_ui' => true,
-            'capability_type' => 'post',
-            'hierarchical' => false,
+            'hierarchical' => true,
             'rewrite' => array(
-                'slug' => 'gooproject',
-                'with_front' => false
+                'slug' => 'gooproject'
                 ),
             'query_var' => true,
             'supports' => array(
@@ -78,11 +78,199 @@ function projects(){
             );
 		register_post_type( 'gooproject', $args );
 	}
-	function goo_flush_rewrites() {
-			projects();
-			flush_rewrite_rules();
+function goo_flush_rewrites() {
+        projects();
+        flush_rewrite_rules();
+}
+add_action( 'init', 'projects' );
+
+
+function employee_id_meta_box() {
+
+    add_meta_box(
+        'employee-id',
+        __( 'Latitude Value', 'wp-goomap' ),
+        'employee_id_meta_box_callback'
+    );
+    add_meta_box(
+        'employee-designation',
+        __( 'Longitude Value', 'wp-goomap' ),
+        'employee_designation_meta_box_callback'
+    );
+
+}
+
+function employee_id_meta_box_callback( $emp ) {
+    wp_nonce_field( 'employee_id_nonce', 'employee_id_nonce' );
+    $value = get_post_meta( $emp->ID, '_employee_id', true );
+    echo '<input style="width:100%" id="employee_id" name="employee_id" value="'. esc_attr( $value ) .'">';
+}
+function employee_designation_meta_box_callback( $emp ) {
+    wp_nonce_field( 'employee_designation_nonce', 'employee_designation_nonce' );
+    $value_1 = get_post_meta( $emp->ID, '_employee_designation', true );
+    echo '<input style="width:100%" id="employee_designation" name="employee_designation" value="'. esc_attr( $value_1 ) .'">';
+}
+
+function save_employee_id_meta_box_data( $post_id ) {
+
+    if ( ! isset( $_POST['employee_id_nonce'] ) ) {
+        return;
     }
-	add_action( 'init', 'projects' );
+    if ( ! wp_verify_nonce( $_POST['employee_id_nonce'], 'employee_id_nonce' ) ) {
+        return;
+    }
+    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+        return;
+    }
+
+    if ( isset( $_POST['post_type'] ) && 'employee' == $_POST['post_type'] ) {
+        if ( ! current_user_can( 'edit_page', $post_id ) ) {
+            return;
+        }
+    }
+    else {
+
+        if ( ! current_user_can( 'edit_post', $post_id ) ) {
+            return;
+        }
+    }
+    if ( ! isset( $_POST['employee_id'] ) ) {
+        return;
+    }
+
+    //for designation
+    if ( ! isset( $_POST['employee_designation_nonce'] ) ) {
+        return;
+    }
+    if ( ! wp_verify_nonce( $_POST['employee_designation_nonce'], 'employee_designation_nonce' ) ) {
+        return;
+    }  
+    if ( ! isset( $_POST['employee_designation'] ) ) {
+        return;
+    }
+
+
+
+    $id_data = sanitize_text_field( $_POST['employee_id'] );
+    $des_data = sanitize_text_field( $_POST['employee_designation'] );
+    update_post_meta( $post_id, '_employee_id', $id_data );
+    update_post_meta( $post_id, '_employee_designation', $des_data );
+}
+
+add_action( 'save_post', 'save_employee_id_meta_box_data' );
+
+// add_action('rest_api_init', function () {
+//   register_rest_route( 'wp-json/wp/v2/', 'gooproject/',array(
+//                 'methods'  => 'GET',
+//                 'callback' => 'get_latest_posts_by_category'
+//       ));
+// });
+
+// function get_latest_posts_by_category( WP_REST_Request $request) {
+
+//     $args = array(
+//             'category' => $request['category_id'],
+//             'post_type' => 'gooproject',
+//     );
+
+//     $posts = get_posts($args);
+//     if (empty($posts)) {
+//     return new WP_Error( 'empty_category', 'There are no posts to display', array('status' => 404) );
+
+//     }
+
+//     $response = new WP_REST_Response($posts);
+//     $response->set_status(200);
+
+//     return $response;
+// }
+
+add_filter( 'get_terms', 'wpa104168_all_terms', 10, 3 );
+
+function wpa104168_all_terms ( $terms, $taxonomies, $args ){
+
+        if ( is_admin() && function_exists( 'get_current_screen' ) && ! is_wp_error( $screen = get_current_screen() ) && in_array( $screen->base, array( 'gooproject', 'edit-post', 'edit' ) ) ) {
+
+            if( in_array( 'gooproject', ( array ) $taxonomies ) ) {
+
+                $all_terms = __( 'All Projects' );
+
+                $all = (object) array( 'term_id' => 'all', 'slug' => 'all', 'name' => $all_terms, 'parent' => '0' );
+
+                $terms['all'] = $all;
+            }
+        }
+        return $terms;
+    }
+
+add_action( 'save_post', 'wpa104168_save_all_terms', 10, 3 );
+
+function wpa104168_save_all_terms ( $post_id ){
+
+// verify this came from our screen and with proper authorization.
+
+    if ( !wp_verify_nonce( $_POST['_wpnonce'], 'update-post_' . $post_id )) {
+        return $post_id;
+    }
+
+    // verify if this is an auto save routine. If it is our form has not been submitted, so we dont want to do anything
+    if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE )
+        return $post_id;
+
+    // Check permissions
+    if ( 'page' == $_POST['gooproject'] ) {
+        if ( !current_user_can( 'edit_page', $post_id ) )
+            return $post_id;
+    } else {
+        if ( !current_user_can( 'edit_post', $post_id ) )
+        return $post_id;
+    }
+
+    // OK, we're authenticated: we need to find and save the data
+   if ( isset( $_POST['tax_input']['gooproject'] ) && is_array( $_POST['tax_input']['gooproject'] ) && in_array( 'all', $_POST['tax_input']['gooproject'] ) ){
+
+    $args = array( 'hide_empty'    => false );
+        $terms = get_terms( 'gooproject', $args );
+
+
+        if ( ! is_wp_error( $terms ) ){
+
+            foreach ( $terms as $term ){
+                $update[] = $term->slug;
+            }
+
+            wp_set_object_terms( $post_id, $update, 'gooproject' );
+
+        }
+
+   }
+
+    return $post_id;
+
+}   
+add_action( 'admin_print_footer_scripts', 'wpa104168_js_solution' );
+
+function wpa104168_js_solution(){ ?>
+
+<script type="text/javascript">
+
+jQuery(document).ready(function($) {
+
+    $('ul#genrechecklist').append('<li><label class="selectit"><input type="checkbox" class="toggle-all-terms"/> Check All</label>');
+
+    $('.toggle-all-terms').on('change', function(){
+        $(this).closest('ul').find(':checkbox').prop('checked', this.checked );
+    });
+
+});
+</script>
+
+<?php } 
+
+
+
+
+
 
 
 /**
@@ -90,17 +278,25 @@ function projects(){
  *
  * @see register_post_type() for registering post types.
  */
+add_action( 'init', 'goo_private_taxonomy_mdb', 30 );
+
 function goo_private_taxonomy_mdb() {
-    $args = array(
-        'label'        => __( 'Multilateral Development Bank', 'wp-goomap' ),
-        'public'       => true,
-        'rewrite'      => array( 'slug' => 'mdb' ),
-        'hierarchical' => true
-    );
-     
-    register_taxonomy( 'mdb', array('gooproject'), $args );
+ 
+  $args = array(
+    'hierarchical'          => true,
+    'label'        => __( 'Multilateral Development Bank', 'wp-goomap' ),
+    'show_ui'               => true,
+    'show_admin_column'     => true,
+    'query_var'             => true,
+    'rewrite'               => array( 'slug' => 'mdb' ),
+    'show_in_rest'          => true,
+    'rest_base'             => 'mdb',
+    'rest_controller_class' => 'WP_REST_Terms_Controller',
+  );
+ 
+  register_taxonomy( 'mdb', array( 'gooproject' ), $args );
+ 
 }
-add_action( 'init', 'goo_private_taxonomy_mdb', 0 );
 
 /**
  * Register a taxonomy Countries
@@ -109,10 +305,16 @@ add_action( 'init', 'goo_private_taxonomy_mdb', 0 );
  */
 function goo_private_taxonomy_countries() {
     $args = array(
-        'label'        => __( 'Countries', 'wp-goomap' ),
-        'public'       => true,
-        'rewrite'      => array( 'slug' => 'countries' ),
-        'hierarchical' => true
+        'label'                 => __( 'Countries', 'wp-goomap' ),
+        'public'                => true,
+        'rewrite'               => array( 'slug' => 'countries' ),
+        'show_ui'               => true,
+        'show_admin_column'     => true,
+        'query_var'             => true,
+        'show_in_rest'          => true,
+        'rest_base'             => 'countries',
+        'rest_controller_class' => 'WP_REST_Terms_Controller',
+        'hierarchical'          => true
     );
      
     register_taxonomy( 'countries', array('gooproject'), $args );
@@ -129,7 +331,11 @@ function goo_private_taxonomy_yoi() {
         'label'        => __( 'Year of Investment', 'wp-goomap' ),
         'public'       => true,
         'rewrite'      => array( 'slug' => 'yoi' ),
-        'hierarchical' => true
+        'query_var'             => true,
+        'show_in_rest'          => true,
+        'rest_base'             => 'yoi',
+        'rest_controller_class' => 'WP_REST_Terms_Controller',
+        'hierarchical'          => true
     );
      
     register_taxonomy( 'yoi', array('gooproject'), $args );
@@ -146,7 +352,11 @@ function goo_private_taxonomy_Status() {
         'label'        => __( 'Status', 'wp-goomap' ),
         'public'       => true,
         'rewrite'      => array( 'slug' => 'status' ),
-        'hierarchical' => true
+        'query_var'             => true,
+        'show_in_rest'          => true,
+        'rest_base'             => 'status',
+        'rest_controller_class' => 'WP_REST_Terms_Controller',
+        'hierarchical'          => true
     );
      
     register_taxonomy( 'status', array('gooproject'), $args );
@@ -163,7 +373,11 @@ function goo_private_taxonomy_SR() {
         'label'        => __( '100% Sport Related', 'wp-goomap' ),
         'public'       => true,
         'rewrite'      => array( 'slug' => '100-sr' ),
-        'hierarchical' => true
+        'query_var'             => true,
+        'show_in_rest'          => true,
+        'rest_base'             => '100-sr',
+        'rest_controller_class' => 'WP_REST_Terms_Controller',
+        'hierarchical'          => true
     );
      
     register_taxonomy( '100-sr', array('gooproject'), $args );
@@ -180,7 +394,11 @@ function goo_private_taxonomy_Sector() {
         'label'        => __( 'Sector', 'wp-goomap' ),
         'public'       => true,
         'rewrite'      => array( 'slug' => 'sector' ),
-        'hierarchical' => true
+        'query_var'             => true,
+        'show_in_rest'          => true,
+        'rest_base'             => 'sector',
+        'rest_controller_class' => 'WP_REST_Terms_Controller',
+        'hierarchical'          => true
     );
      
     register_taxonomy( 'sector', array('gooproject'), $args );
@@ -197,7 +415,11 @@ function goo_private_taxonomy_tosp() {
         'label'        => __( 'Type of Sport Project', 'wp-goomap' ),
         'public'       => true,
         'rewrite'      => array( 'slug' => 'tosp' ),
-        'hierarchical' => true
+        'query_var'             => true,
+        'show_in_rest'          => true,
+        'rest_base'             => 'tosp',
+        'rest_controller_class' => 'WP_REST_Terms_Controller',
+        'hierarchical'          => true
     );
      
     register_taxonomy( 'tosp', array('gooproject'), $args );
@@ -214,7 +436,11 @@ function goo_private_taxonomy_Size() {
         'label'        => __( 'Size', 'wp-goomap' ),
         'public'       => true,
         'rewrite'      => array( 'slug' => 'size' ),
-        'hierarchical' => true
+        'query_var'             => true,
+        'show_in_rest'          => true,
+        'rest_base'             => 'size',
+        'rest_controller_class' => 'WP_REST_Terms_Controller',
+        'hierarchical'          => true
     );
      
     register_taxonomy( 'size', array('gooproject'), $args );
@@ -231,7 +457,11 @@ function goo_private_taxonomy_Covid_19() {
         'label'        => __( 'Covid-19', 'wp-goomap' ),
         'public'       => true,
         'rewrite'      => array( 'slug' => 'Covid-19' ),
-        'hierarchical' => true
+        'query_var'             => true,
+        'show_in_rest'          => true,
+        'rest_base'             => 'Covid-19',
+        'rest_controller_class' => 'WP_REST_Terms_Controller',
+        'hierarchical'          => true
     );
      
     register_taxonomy( 'covid-19', array('gooproject'), $args );
@@ -248,7 +478,11 @@ function goo_private_taxonomy_Key_Partner() {
         'label'        => __( 'Key Partner', 'wp-goomap' ),
         'public'       => true,
         'rewrite'      => array( 'slug' => 'key-partner' ),
-        'hierarchical' => true
+        'query_var'             => true,
+        'show_in_rest'          => true,
+        'rest_base'             => 'key-partner',
+        'rest_controller_class' => 'WP_REST_Terms_Controller',
+        'hierarchical'          => true
     );
      
     register_taxonomy( 'key-partner', array('gooproject'), $args );
@@ -265,7 +499,11 @@ function goo_private_taxonomy_Key_Terms() {
         'label'        => __( 'Key Terms', 'wp-goomap' ),
         'public'       => true,
         'rewrite'      => array( 'slug' => 'key-terms' ),
-        'hierarchical' => true
+        'query_var'             => true,
+        'show_in_rest'          => true,
+        'rest_base'             => 'key-terms',
+        'rest_controller_class' => 'WP_REST_Terms_Controller',
+        'hierarchical'          => true
     );
      
     register_taxonomy( 'key-terms', array('gooproject'), $args );
@@ -282,7 +520,11 @@ function goo_private_taxonomy_financial() {
         'label'        => __( 'Financial Instrument', 'wp-goomap' ),
         'public'       => true,
         'rewrite'      => array( 'slug' => 'financial' ),
-        'hierarchical' => true
+        'query_var'             => true,
+        'show_in_rest'          => true,
+        'rest_base'             => 'financial',
+        'rest_controller_class' => 'WP_REST_Terms_Controller',
+        'hierarchical'          => true
     );
      
     register_taxonomy( 'financial', array('gooproject'), $args );
