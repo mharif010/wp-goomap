@@ -351,11 +351,10 @@
                   23.7225118, 90.3193431, 4])
               }
 
-              var locations = [
-                myLocation.toString()
-              ];
+              var locations = myLocation;
+              
               //console.log(myLocation.toString())
-              //console.log(locations);
+              console.log(locations);
 
               //console.log(result);
 
@@ -371,7 +370,7 @@
                 // ];
 
                 //Google map custom style with custom style from here.
-                  const styledMapType = new google.maps.StyledMapType(
+                const styledMapType = new google.maps.StyledMapType(
                     [
                       {
                         "elementType": "geometry",
@@ -727,6 +726,8 @@
                         infowindow.open(map, marker);
                       }
                     })(marker, i));
+
+                    console.log(marker);
                   }
 
             }
