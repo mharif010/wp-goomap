@@ -58,7 +58,7 @@
                                 if ( ! empty( $terms ) && ! is_wp_error( $terms ) ){
                                     echo '<ul id="yoi" class="global-overview">';
                                     foreach ( $terms as $term ) {
-                                        echo '<li><input type="checkbox" onchange="get_check_value()" name="sportrelated[]" value="' . $term->term_id . '"> ' . $term->name . '</li>';
+                                        echo '<li><input type="checkbox" onchange="initMap()" name="sportrelated[]" value="' . $term->term_id . '"> ' . $term->name . '</li>';
                                     }
                                     echo '</ul>';
                                 }                              
@@ -70,7 +70,7 @@
                                 if ( ! empty( $terms ) && ! is_wp_error( $terms ) ){
                                     echo '<ul id="yoi" class="global-overview">';
                                     foreach ( $terms as $term ) {
-                                        echo '<li><input type="checkbox" onchange="get_check_value()" name="modalitystore[]" value="active"> ' . $term->name . '</li>';
+                                        echo '<li><input type="checkbox" onchange="initMap()" name="modalitystore[]" value="' . $term->term_id . '"> ' . $term->name . '</li>';
                                     }
                                     echo '</ul>';
                                 }                              
@@ -82,7 +82,7 @@
                                 if ( ! empty( $terms ) && ! is_wp_error( $terms ) ){
                                     echo '<ul id="yoi" class="global-overview status-list">';
                                     foreach ( $terms as $term ) {
-                                        echo '<li><input type="checkbox" onchange="get_check_value()" name="projectstore[]" value="active"> ' . $term->name . '</li>';
+                                        echo '<li><input type="checkbox" onchange="initMap()" name="projectstore[]" value="' . $term->term_id . '"> ' . $term->name . '</li>';
                                     }
                                     echo '</ul>';
                                 }                              
@@ -94,7 +94,7 @@
                                 if ( ! empty( $terms ) && ! is_wp_error( $terms ) ){
                                     echo '<ul id="yoi" class="global-overview status-list">';
                                     foreach ( $terms as $term ) {
-                                        echo '<li><input type="checkbox" onchange="get_check_value()" name="Investment[]" value="active"> ' . $term->name . '</li>';
+                                        echo '<li><input type="checkbox" onchange="initMap()" name="Investment[]" value="' . $term->term_id . '"> ' . $term->name . '</li>';
                                     }
                                     echo '</ul>';
                                 }                              
@@ -107,7 +107,7 @@
                                   if ( ! empty( $terms ) && ! is_wp_error( $terms ) ){
                                       echo '<ul id="yoi" class="global-overview status-list">';
                                       foreach ( $terms as $term ) {
-                                          echo '<li><input type="checkbox" onchange="get_check_value()" name="sectorstore[]" value="active"> ' . $term->name . '</li>';
+                                          echo '<li><input type="checkbox" onchange="initMap()" name="sectorstore[]" value="' . $term->term_id . '"> ' . $term->name . '</li>';
                                       }
                                       echo '</ul>';
                                   }                              
@@ -119,7 +119,7 @@
                                 if ( ! empty( $terms ) && ! is_wp_error( $terms ) ){
                                     echo '<ul id="yoi" class="global-overview status-list">';
                                     foreach ( $terms as $term ) {
-                                        echo '<li><input type="checkbox" onchange="get_check_value()" name="typeSportstore[]" value="active">' . $term->name . '</li>';
+                                        echo '<li><input type="checkbox" onchange="initMap()" name="typeSportstore[]" value="' . $term->term_id . '">' . $term->name . '</li>';
                                     }
                                     echo '</ul>';
                                 }                              
@@ -131,7 +131,7 @@
                                 if ( ! empty( $terms ) && ! is_wp_error( $terms ) ){
                                     echo '<ul id="yoi" class="global-overview status-list">';
                                     foreach ( $terms as $term ) {
-                                        echo '<li><input type="checkbox" onchange="get_check_value()" name="sizestore[]" value="active"> ' . $term->name . '</li>';
+                                        echo '<li><input type="checkbox" onchange="initMap()" name="sizestore[]" value="' . $term->term_id . '"> ' . $term->name . '</li>';
                                     }
                                     echo '</ul>';
                                 }                              
@@ -143,7 +143,7 @@
                                 if ( ! empty( $terms ) && ! is_wp_error( $terms ) ){
                                     echo '<ul id="yoi" class="global-overview status-list">';
                                     foreach ( $terms as $term ) {
-                                        echo '<li><input type="checkbox" onchange="get_check_value()" name="countrystore[]" value="' . $term->term_id . '"><a href="#"> ' . $term->name . '</a></li>';
+                                        echo '<li><input type="checkbox" onchange="initMap()" name="countrystore[]" value="' . $term->term_id . '"><a href="#"> ' . $term->name . '</a></li>';
                                     }
                                     echo '</ul>';
                                 }                              
@@ -155,7 +155,7 @@
                                 if ( ! empty( $terms ) && ! is_wp_error( $terms ) ){
                                     echo '<ul id="yoi" class="global-overview status-list">';
                                     foreach ( $terms as $term ) {
-                                        echo '<li><input type="checkbox" onchange="get_check_value()" name="keywordstore[]" value="' . $term->term_id . '"><a href="#"> ' . $term->name . '</a></li>';
+                                        echo '<li><input type="checkbox" onchange="initMap()" name="keywordstore[]" value="' . $term->term_id . '"><a href="#"> ' . $term->name . '</a></li>';
                                     }
                                     echo '</ul>';
                                 }                              
@@ -172,7 +172,7 @@
     </div>
 
     <script
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBxHRBU_I-JXkZRv1HLG3uoaEV_Pa_HC14&callback=get_check_value"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBxHRBU_I-JXkZRv1HLG3uoaEV_Pa_HC14&callback=initMap"
       
     ></script>
 
@@ -181,16 +181,7 @@
 
     <script type="text/javascript">
 
-    // var locations = [
-    //   ['<div style="color:#fff;background:#0e1626;width:300px;padding:10px;" class"marker-board"><b>Countries</b>:- India, USA</br><b>Status</b>:- Active</br><b>Years</b>:- 2010,2011<br><b>Sport</b>:- postTitle<br><b>Sector</b>:- Healty, Energy<br><b>Type of Sport:- </b>Capacity building <br><b>Size:- </b>Large size > $1m <br><b>Keywords:- </b> Disability<br><b>Modality:- </b> Loans<br></div>',
-    //    23.7225118, 90.3193431, 4],
-    //   ['Coogee Beach', -33.923036, 151.259052, 5],
-    //   ['Cronulla Beach', -34.028249, 151.157507, 3],
-    //   ['Manly Beach', -33.80010128657071, 151.28747820854187, 2],
-    //   ['Maroubra Beach', -33.950198, 151.259302, 1]
-    // ];
-
-    function get_check_value(){
+    function initMap(){
 
       //100% sport related projects items  get here 
       var checkboxes = document.getElementsByName('sportrelated[]');
@@ -203,9 +194,6 @@
           }
       }
       if (sportrelated) sportrelated = sportrelated.substring(1);
-     
-
-      //console.log(sportrelated);
 
       //Country list projects items  get here
       var checkboxes2 = document.getElementsByName('countrystore[]');
@@ -219,8 +207,6 @@
       }
       if (countrystore) countrystore = countrystore.substring(1);
 
-      //console.log(countrystore);
-
       //MODALITY OF ASSISTANCE projects items get here
       var checkboxes3 = document.getElementsByName('modalitystore[]');
       var modalitystore = "";
@@ -232,8 +218,6 @@
           }
       }
       if (modalitystore) modalitystore = modalitystore.substring(1);
-      
-      //console.log(modalitystore);
 
       //PROJECT STATUS projects items get here
       var checkboxes4 = document.getElementsByName('projectstore[]');
@@ -246,8 +230,6 @@
           }
       }
       if (projectstore) projectstore = projectstore.substring(1);
-      
-      //console.log(projectstore);
 
       //Year of Investment projects items get here
       var checkboxes5 = document.getElementsByName('Investment[]');
@@ -260,8 +242,6 @@
           }
       }
       if (Investment) Investment = Investment.substring(1);
-      
-      //console.log(Investment);
 
       //Sector store projects items get here
       var checkboxes6 = document.getElementsByName('sectorstore[]');
@@ -274,8 +254,6 @@
           }
       }
       if (sectorstore) sectorstore = sectorstore.substring(1);
-      
-      //console.log(sectorstore);
 
       //Size of projects items get here
       var checkboxes8 = document.getElementsByName('sizestore[]');
@@ -288,8 +266,6 @@
           }
       }
       if (sizestore) sizestore = sizestore.substring(1);
-      
-      //console.log(sizestore);
 
       //Keyword of projects items get here
       var checkboxes9 = document.getElementsByName('keywordstore[]');
@@ -303,17 +279,60 @@
       }
       if (keywordstore) keywordstore = keywordstore.substring(1);
       
-      //console.log(keywordstore);
+     //check empty value of sportrelated
+      if( sportrelated != ""){
+        var newSport = '100-sr=' + sportrelated;
+      }else{
+        var newSport = "";
+      }
+     //check empty value of countrystore
+      if( countrystore != ""){
+        var newCountry = '&countries=' + countrystore;
+      }else{
+        var newCountry = "";
+      }
+      //check empty value of modalitystore
+      if( modalitystore != ""){
+        var newModality = '&financial=' + modalitystore;
+      }else{
+        var newModality = "";
+      }
+      //check empty value of projectstore
+      if( projectstore != ""){
+        var newProject = '&status=' + projectstore;
+      }else{
+        var newProject = "";
+      }
+      //check empty value of Investment
+      if( Investment != ""){
+        var newInvestment = '&yoi=' + Investment;
+      }else{
+        var newInvestment = "";
+      }
+      //check empty value of sectorstore
+      if( sectorstore != ""){
+        var newSector = '&sector=' + sectorstore;
+      }else{
+        var newSector = "";
+      }
+      //check empty value of sizestore
+      if( sizestore != ""){
+        var newSize = '&size=' + sizestore;
+      }else{
+        var newSize = "";
+      }
+      //check empty value of keywordstore
+      if( keywordstore != ""){
+        var newKey = '&key-terms=' + keywordstore;
+      }else{
+        var newKey = "";
+      }
 
-      // if(sportrelated){
-      //   var a = '100-sr=' + sportrelated;
-      // }
-     
 
+      let endpoint = 'http://localhost:8080/wp-tester/wp-json/wp/v2/gooproject?'+ newSport + newCountry + newModality + newProject + newInvestment + newSector + newSize + newKey +'&_embed=1';
 
+      console.log(endpoint);
 
-
-      let endpoint = 'http://localhost:8080/wp-tester/wp-json/wp/v2/gooproject?'+ if(sportrelated)?'100-sr=' + sportrelated:'' + '&countries=' + countrystore + '&financial='+ modalitystore +'&status='+ projectstore +'&yoi='+ Investment +'&sector='+ sectorstore +'&size='+ sizestore +'&key-terms='+ keywordstore +'&_embed=1';
         $.ajax({
             url: endpoint,
             contentType: "application/json",
@@ -323,35 +342,33 @@
               console.log(result);
 
               //console.log(result.length)
-              // var locations = [
-              //   myLocation
-              // ];
+              
 
-              // var myLocation = [];
+              var myLocation = [];
 
-              // for(i = 0; i < result.length; i++){
-              //   myLocation.push(['<div style="color:#fff;background:#0e1626;width:300px;padding:10px;" class"marker-board"><b>Countries</b>:- '+result[i]._embedded['wp:term'][0][0].name+'</br><b>Status</b>:- '+result[i]._embedded['wp:term'][2][0].name+'</br><b>Years</b>:- 2010,2011<br><b>Sport</b>:- postTitle<br><b>Sector</b>:- Healty, Energy<br><b>Type of Sport:- </b>Capacity building <br><b>Size:- </b>Large size > $1m <br><b>Keywords:- </b> Disability<br><b>Modality:- </b> Loans<br></div>',
-              //     23.7225118, 90.3193431, 4])
-              // }
+              for(i = 0; i < result.length; i++){
+                myLocation.push(['<div style="color:#fff;background:#0e1626;width:300px;padding:10px;" class"marker-board"><b>Countries</b>:- '+result[i]._embedded['wp:term'][0][0].name+'</br><b>Status</b>:- '+result[i]._embedded['wp:term'][2][0].name+'</br><b>Years</b>:- 2010,2011<br><b>Sport</b>:- postTitle<br><b>Sector</b>:- Healty, Energy<br><b>Type of Sport:- </b>Capacity building <br><b>Size:- </b>Large size > $1m <br><b>Keywords:- </b> Disability<br><b>Modality:- </b> Loans<br></div>',
+                  23.7225118, 90.3193431, 4])
+              }
 
-              // var locations = [
-              //   myLocation
-              // ];
-
+              var locations = [
+                myLocation.toString()
+              ];
+              //console.log(myLocation.toString())
               //console.log(locations);
 
               //console.log(result);
 
                // console.log(countries.toString());
 
-                var locations = [
-                  ['<div style="color:#fff;background:#0e1626;width:300px;padding:10px;" class"marker-board"><b>Countries</b>:- India, USA</br><b>Status</b>:- Active</br><b>Years</b>:- 2010,2011<br><b>Sport</b>:- postTitle<br><b>Sector</b>:- Healty, Energy<br><b>Type of Sport:- </b>Capacity building <br><b>Size:- </b>Large size > $1m <br><b>Keywords:- </b> Disability<br><b>Modality:- </b> Loans<br></div>',
-                  23.7225118, 90.3193431, 4],
-                  ['Coogee Beach', -33.923036, 151.259052, 5],
-                  ['Cronulla Beach', -34.028249, 151.157507, 3],
-                  ['Manly Beach', -33.80010128657071, 151.28747820854187, 2],
-                  ['Maroubra Beach', -33.950198, 151.259302, 1]
-                ];
+                // var locations = [
+                //   ['<div style="color:#fff;background:#0e1626;width:300px;padding:10px;" class"marker-board"><b>Countries</b>:- India, USA</br><b>Status</b>:- Active</br><b>Years</b>:- 2010,2011<br><b>Sport</b>:- postTitle<br><b>Sector</b>:- Healty, Energy<br><b>Type of Sport:- </b>Capacity building <br><b>Size:- </b>Large size > $1m <br><b>Keywords:- </b> Disability<br><b>Modality:- </b> Loans<br></div>',
+                //   23.7225118, 90.3193431, 4],
+                //   ['Coogee Beach', -33.923036, 151.259052, 5],
+                //   ['Cronulla Beach', -34.028249, 151.157507, 3],
+                //   ['Manly Beach', -33.80010128657071, 151.28747820854187, 2],
+                //   ['Maroubra Beach', -33.950198, 151.259302, 1]
+                // ];
 
                 //Google map custom style with custom style from here.
                   const styledMapType = new google.maps.StyledMapType(
