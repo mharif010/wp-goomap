@@ -339,7 +339,7 @@
             dataType: 'json',
             success: function(result){
               
-              console.log(result);
+              //console.log(result);
 
               //console.log(result.length)
               
@@ -347,14 +347,14 @@
               var myLocation = [];
 
               for(i = 0; i < result.length; i++){
-                myLocation.push(['<div style="color:#fff;background:#0e1626;width:300px;padding:10px;" class"marker-board"><b>Countries</b>:- '+result[i]._embedded['wp:term'][0][0].name+'</br><b>Status</b>:- '+result[i]._embedded['wp:term'][2][0].name+'</br><b>Years</b>:- 2010,2011<br><b>Sport</b>:- postTitle<br><b>Sector</b>:- Healty, Energy<br><b>Type of Sport:- </b>Capacity building <br><b>Size:- </b>Large size > $1m <br><b>Keywords:- </b> Disability<br><b>Modality:- </b> Loans<br></div>',
-                  23.7225118, 90.3193431, 4])
+                myLocation.push(['<div style="color:#fff;background:#0e1626;width:300px;padding:10px;" class"marker-board"><b>Countries</b>:- '+result[i]._embedded['wp:term'][0][0].name+'</br><b>Status</b>:- '+result[i]._embedded['wp:term'][2][0].name+'</br><b>Year of Investment</b>:- '+result[i]._embedded['wp:term'][1][0].name+'<br><b>100% Sport Related</b>:- '+result[i]._embedded['wp:term'][3][0].name+'<br><b>Sector</b>:- '+result[i]._embedded['wp:term'][4][0].name+'<br><b>Type of Sport:- </b>'+result[i]._embedded['wp:term'][5][0].name+' <br><b>Size:- </b>'+result[i]._embedded['wp:term'][6][0].name+' <br><b>Keywords:- </b> '+result[i]._embedded['wp:term'][9][0].name+'<br><b>Modality:- </b> '+result[i]._embedded['wp:term'][10][0].name+'<br></div>',
+                  result[i].postmeta['_employee_id'][0], result[i].postmeta['_employee_designation'][0], i++]);  
               }
 
               var locations = myLocation;
               
               //console.log(myLocation.toString())
-              console.log(locations);
+              //console.log(locations);
 
               //console.log(result);
 

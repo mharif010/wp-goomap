@@ -185,91 +185,22 @@ add_action( 'save_post', 'save_employee_id_meta_box_data' );
 //     return $response;
 // }
 
-add_filter( 'get_terms', 'wpa104168_all_terms', 10, 3 );
 
-function wpa104168_all_terms ( $terms, $taxonomies, $args ){
+add_action( 'rest_api_init', 'create_api_posts_meta_field' );
 
-        if ( is_admin() && function_exists( 'get_current_screen' ) && ! is_wp_error( $screen = get_current_screen() ) && in_array( $screen->base, array( 'gooproject', 'edit-post', 'edit' ) ) ) {
+function create_api_posts_meta_field() {
+    // register_rest_field ( 'name-of-post-type', 'name-of-field-to-return', array-of-callbacks-and-schema() )
+    register_rest_field( 'gooproject', 'postmeta', array(
+            'get_callback'    => 'get_post_meta_for_api',
+            'schema'          => null,
+        )
+    );
+}
 
-            if( in_array( 'gooproject', ( array ) $taxonomies ) ) {
-
-                $all_terms = __( 'All Projects' );
-
-                $all = (object) array( 'term_id' => 'all', 'slug' => 'all', 'name' => $all_terms, 'parent' => '0' );
-
-                $terms['all'] = $all;
-            }
-        }
-        return $terms;
-    }
-
-add_action( 'save_post', 'wpa104168_save_all_terms', 10, 3 );
-
-function wpa104168_save_all_terms ( $post_id ){
-
-// verify this came from our screen and with proper authorization.
-
-    if ( !wp_verify_nonce( $_POST['_wpnonce'], 'update-post_' . $post_id )) {
-        return $post_id;
-    }
-
-    // verify if this is an auto save routine. If it is our form has not been submitted, so we dont want to do anything
-    if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE )
-        return $post_id;
-
-    // Check permissions
-    if ( 'page' == $_POST['gooproject'] ) {
-        if ( !current_user_can( 'edit_page', $post_id ) )
-            return $post_id;
-    } else {
-        if ( !current_user_can( 'edit_post', $post_id ) )
-        return $post_id;
-    }
-
-    // OK, we're authenticated: we need to find and save the data
-   if ( isset( $_POST['tax_input']['gooproject'] ) && is_array( $_POST['tax_input']['gooproject'] ) && in_array( 'all', $_POST['tax_input']['gooproject'] ) ){
-
-    $args = array( 'hide_empty'    => false );
-        $terms = get_terms( 'gooproject', $args );
-
-
-        if ( ! is_wp_error( $terms ) ){
-
-            foreach ( $terms as $term ){
-                $update[] = $term->slug;
-            }
-
-            wp_set_object_terms( $post_id, $update, 'gooproject' );
-
-        }
-
-   }
-
-    return $post_id;
-
-}   
-add_action( 'admin_print_footer_scripts', 'wpa104168_js_solution' );
-
-function wpa104168_js_solution(){ ?>
-
-<script type="text/javascript">
-
-jQuery(document).ready(function($) {
-
-    $('ul#genrechecklist').append('<li><label class="selectit"><input type="checkbox" class="toggle-all-terms"/> Check All</label>');
-
-    $('.toggle-all-terms').on('change', function(){
-        $(this).closest('ul').find(':checkbox').prop('checked', this.checked );
-    });
-
-});
-</script>
-
-<?php } 
-
-
-
-
+function get_post_meta_for_api( $obj ) {
+    // return the post meta
+    return get_post_meta( $obj['id'] );
+}
 
 
 
